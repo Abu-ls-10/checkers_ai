@@ -1,0 +1,19 @@
+# Ignore compiled files
+*.class
+*.jar
+
+# Ignore IDE files
+.idea/
+.vscode/
+*.iml
+
+# Ignore logs
+*.log
+
+# Ignore build output
+/build/
+/dist/
+out/
+
+# Ignore macOS .DS_Store files
+.DS_Store

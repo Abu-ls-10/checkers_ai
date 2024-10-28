@@ -1,36 +1,13 @@
 #root {
-  max-width: 1280px;
+  /* max-width: 1280px; */
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+  background-color: #21201E;
+  align-items: center;
+  justify-content: center;
+  /* display: flex;
+  flex-direction: column; */
 }
 
 .card {
@@ -41,12 +18,30 @@
   color: #888;
 }
 
+.main-display {
+  display: flex;
+  flex-direction: row;
+  font-family: 'Poppins', sans-serif;
+}
+
+.game-info {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: fit-content;
+  width: 60%;
+  text-align: left;
+  color: #fafafa;
+  padding: 20px 60px 20px 20px;
+}
+
 .app {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100vh;
+  width: 40%;
   background-color: #f0f0f0;
 }
 
@@ -58,10 +53,13 @@ h1 {
   display: grid;
   grid-template-columns: repeat(8, 1fr);
   grid-template-rows: repeat(8, 1fr);
-  width: 500px; /* Set the width of the board */
-  height: 500px; /* Set the height of the board */
+  width: 32vw; /* Set width to be responsive to viewport */
+  height: 32vw; /* Maintain a square aspect ratio based on width */
+  max-width: 500px;
+  max-height: 500px;
   border-radius: 20px; /* Make the corners of the board rounded */
   overflow: hidden; /* Ensure that corners are nicely rounded */
+  border: #888;
 }
 
 .tile {
@@ -70,15 +68,15 @@ h1 {
   align-items: center; /* Center vertically */
   width: 100%; /* Full width */
   height: 100%; /* Full height */
-  border-radius: 0; /* Slightly curved corners */
+  border-radius: 0;
 }
 
 .brown {
-  background-color: #8b5a2b; /* Dark brown */
+  background-color: #6E644E; /* Dark brown */
 }
 
 .beige {
-  background-color: #f5deb3; /* Light beige */
+  background-color: #B8B398; /* Light beige */
 }
 
 .piece {
@@ -98,9 +96,41 @@ h1 {
 }
 
 .black-king {
-  background-color: black; /* Black pieces */
+  background-color: black;
+  border-radius: 3px;
+  border: yellow;
 }
 
 .red-king {
-  background-color: red; /* Red pieces */
+  background-color: red;
+  border-radius: 3px;
+  border: yellow;
+}
+
+@media (max-width: 1200px) {
+  .main-display {
+    flex-direction: column; /* Stack vertically on small screens */
+    align-items: center;
+
+  }
+
+  .game-info {
+    width: 100%; /* Full width for small screens */
+    height: fit-content;
+    padding: 20px 30px 20px 30px;
+  }
+
+  .game-info h1, p{
+    text-align: center;
+  }
+
+  .app {
+    width: 100%; /* Full width for small screens */
+    margin: 20px 30px 20px 30px;
+  }
+
+  .board {
+    width: 48vw; /* Set width to be responsive to viewport */
+    height: 48vw; /* Maintain a square aspect ratio based on width */
+  }
 }
