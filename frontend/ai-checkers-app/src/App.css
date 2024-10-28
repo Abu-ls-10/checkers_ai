@@ -1,0 +1,106 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #f0f0f0;
+}
+
+h1 {
+  margin-bottom: 20px;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  width: 500px; /* Set the width of the board */
+  height: 500px; /* Set the height of the board */
+  border-radius: 20px; /* Make the corners of the board rounded */
+  overflow: hidden; /* Ensure that corners are nicely rounded */
+}
+
+.tile {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  border-radius: 0; /* Slightly curved corners */
+}
+
+.brown {
+  background-color: #8b5a2b; /* Dark brown */
+}
+
+.beige {
+  background-color: #f5deb3; /* Light beige */
+}
+
+.piece {
+  width: 75%; /* Set the size of the pieces */
+  height: 75%;
+  border-radius: 50%; /* Make the pieces circular */
+  position: relative;
+  margin: auto;
+}
+
+.black {
+  background-color: black; /* Black pieces */
+}
+
+.red {
+  background-color: red; /* Red pieces */
+}
+
+.black-king {
+  background-color: black; /* Black pieces */
+}
+
+.red-king {
+  background-color: red; /* Red pieces */
+}
