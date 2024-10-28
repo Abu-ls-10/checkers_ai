@@ -1,1 +1,1 @@
-# ai_checkers
+# checkers_ai
