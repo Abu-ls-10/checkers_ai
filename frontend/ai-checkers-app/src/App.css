@@ -3,7 +3,7 @@
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
-  background-color: #21201E;
+  background-color: #121212;
   align-items: center;
   justify-content: center;
   /* display: flex;
@@ -21,6 +21,8 @@
 .main-display {
   display: flex;
   flex-direction: row;
+  align-items: center; /* Centers items vertically */
+  justify-content: center; /* Centers items horizontally */
   font-family: 'Poppins', sans-serif;
 }
 
@@ -31,8 +33,12 @@
   height: fit-content;
   width: 60%;
   text-align: left;
-  color: #fafafa;
+  color: #f0f0f0;
   padding: 20px 60px 20px 20px;
+}
+
+.game-info h3 {
+  color: #ff4d4d;
 }
 
 .app {
@@ -40,9 +46,32 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  height: 90vh;
   width: 40%;
-  background-color: #f0f0f0;
+  color: #f0f0f0;
+  background-color: #2e2e2e;
+  border-radius: 12px;
+}
+
+.button {
+  margin: 10px;
+  padding: 10px 20px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  /* font-weight: bold; */
+  background: linear-gradient(45deg, #ff4d4d, #d63031);
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease, color 0.3s ease, transform 0.3s ease;
+}
+
+/* Hover effect */
+.button:hover {
+  background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+  color: #ff4d4d;
+  transform: scale(1.05); /* Slightly enlarge button on hover */
 }
 
 h1 {
@@ -71,12 +100,12 @@ h1 {
   border-radius: 0;
 }
 
-.brown {
-  background-color: #6E644E; /* Dark brown */
+.dark {
+  background-color: #8a7963; /* Dark brown */
 }
 
-.beige {
-  background-color: #B8B398; /* Light beige */
+.light {
+  background-color: #bfb59e; /* Light beige */
 }
 
 .piece {
@@ -85,24 +114,28 @@ h1 {
   border-radius: 50%; /* Make the pieces circular */
   position: relative;
   margin: auto;
+  box-shadow: 
+    inset -2px -2px 4px rgba(255, 255, 255, 0.4), /* Light inner shadow for highlight */
+    inset 2px 2px 4px rgba(0, 0, 0, 0.6), /* Dark inner shadow */
+    2px 2px 6px rgba(0, 0, 0, 0.7); /* Outer shadow for lifting effect */
 }
 
 .black {
-  background-color: black; /* Black pieces */
+  background: radial-gradient(circle at 30% 30%, #333333, #000000 80%);
 }
 
 .red {
-  background-color: red; /* Red pieces */
+  background: radial-gradient(circle at 30% 30%, #ff4d4d, #990000 80%);
 }
 
 .black-king {
-  background-color: black;
+  background-color: #000000;
   border-radius: 3px;
   border: yellow;
 }
 
 .red-king {
-  background-color: red;
+  background-color: #ff4d4d;
   border-radius: 3px;
   border: yellow;
 }

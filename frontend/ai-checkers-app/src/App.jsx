@@ -17,8 +17,8 @@ const App = () => {
 
   // Function to render each tile
   const renderTile = (row, col) => {
-    const isLightBrown = (row + col) % 2 === 0; // Adjust condition for light brown
-    const tileClass = isLightBrown ? 'tile beige' : 'tile brown'; // Switch colors
+    const isLight = (row + col) % 2 === 0; // Adjust condition for light brown
+    const tileClass = isLight ? 'tile light' : 'tile dark'; // Switch colors
     const piece = boardLayout[row][col];
 
     return (
@@ -36,7 +36,7 @@ const App = () => {
       <div className="game-info">
         <h1 style={{ fontSize: '2.5rem', marginBottom: '10px' }}>Welcome to Checkers AI!</h1>
         
-        <p style={{ fontSize: '1.2rem', color: '#555' }}>
+        <p style={{ fontSize: '1.2rem', color: '#b3b3b3' }}>
           Challenge the AI in a strategic game of checkers. Outsmart the computer, or hone your skills
           against a formidable opponent. Ready to play?
         </p>
@@ -63,18 +63,9 @@ const App = () => {
           <li><strong>Winning:</strong> Capture all opponent pieces or leave them with no moves.</li>
         </ul>
 
-        {/* Optional Features */}
+        {/* New Game Button */}
         <div style={{ marginTop: '20px' }}>
-          <button style={{
-            margin: '10px',
-            padding: '10px 20px',
-            fontSize: '1rem',
-            backgroundColor: '#4CAF50',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer'
-          }}>
+          <button className='button'>
             New Game
           </button>
         </div>
