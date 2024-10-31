@@ -22,70 +22,61 @@ curr_state = checkers_ai.State(initial_board, 12, 12, 0, 0)
 @app.route('/user_move', methods=['POST'])
 def user_moves():
     """Endpoint to get all possible moves for the user."""
-    try:
-        # Get current game-state from frontend
-        data = request.json
-        board = data.get('board_state')
-        num_r = data.get('num_red_pieces')
-        num_r_kings = data.get('num_red_kings')
-        num_b = data.get('num_black_pieces')
-        num_b_kings = data.get('num_black_kings')
 
-        if not (board and num_r and num_b and num_r_kings and num_b_kings):
-            return jsonify({"error": "State info is required"}), 400
-        
-        state = checkers_ai.State(board, num_r, num_b, num_r_kings, num_b_kings)
+    # Generate all possible successor states for the user (red pieces)
+    successors = checkers_ai.generate_successors(curr_state, 'r')
+    user_moves_dict = checkers_ai.get_user_moves_dict(successors)
 
-        # Generate all possible successor states for the user (red pieces)
-        successors = checkers_ai.generate_successors(state, 'r')
-        user_moves_dict = checkers_ai.get_user_moves_dict(successors)
+    # Send user moves to frontend
+    return jsonify({"user_moves": user_moves_dict}), 200
 
-        # Send user moves to frontend
-        return jsonify({"user_moves": user_moves_dict}), 200
-
-    except Exception as e:
-        # Handle unexpected errors
-        return jsonify({"error": str(e)}), 500
-    
 
 @app.route('/apply_user_move', methods=['POST'])
 def apply_user_move():
     """Endpoint to apply user's move"""
+    try:
+        # Get user-move info from frontend
+        data = request.json
+        old_coords = data.get('old_coords')
+        new_coords = data.get('new_coords')
+        piece = data.get('piece')
+
+        if not all([old_coords, new_coords, piece]):
+            return jsonify({"error": "Missing required parameters"}), 400
+
+        directions = [(-1, -1), (-1, 1)] if piece == 'r' else [(-1, -1), (-1, 1), (1, -1), (1, 1)]
+        moves = checkers_ai.get_possible_moves(curr_state, old_coords[0], old_coords[1], piece, 'b', directions)
+
+        for new_state in moves:
+            if new_state.initial_coords == old_coords and new_state.new_move_coords == new_coords:
+                curr_state = new_state
+
+        return jsonify({"board_state": new_state.board})
+
+    except Exception as e:
+        # Handle unexpected errors
+        return jsonify({"error": str(e)}), 500
     
 
 @app.route('/ai_move', methods=['POST'])
 def ai_move():
     """Endpoint to get AI's next move."""
-    try:
-        # Get current game-state from frontend
-        data = request.json
-        board = data.get('board_state')
-        num_r = data.get('num_red_pieces')
-        num_r_kings = data.get('num_red_kings')
-        num_b = data.get('num_black_pieces')
-        num_b_kings = data.get('num_black_kings')
 
-        if not (board and num_r and num_b and num_r_kings and num_b_kings):
-            return jsonify({"error": "State info is required"}), 400
+    # Set up parameters for alpha-beta pruning
+    alpha = -1000000  # -float('inf')
+    beta = 1000000  # float('inf')
 
-        state = checkers_ai.State(board, num_r, num_b, num_r_kings, num_b_kings)
+    # Compute AI's move
+    ai_move = checkers_ai.limited_minimax_alphabeta(curr_state, 'b', 0, alpha, beta)[0]
 
-        # Set up parameters for alpha-beta pruning
-        alpha = -1000000  # -float('inf')
-        beta = 1000000  # float('inf')
+    # Extract move coordinates for the AI's move
+    ai_move_coords = [ai_move.initial_coords, ai_move.new_move_coords]
 
-        # Compute AI's move
-        ai_move = checkers_ai.limited_minimax_alphabeta(state, 'b', 0, alpha, beta)[0]
+    # Update curr_state to reflect AI's move
+    curr_state = ai_move
 
-        # Extract move coordinates for the AI's move
-        ai_move_coords = [ai_move.initial_coords, ai_move.new_move_coords]
-
-        # Send AI's move to frontend
-        return jsonify({"ai_move": ai_move_coords}), 200
-
-    except Exception as e:
-        # Handle unexpected errors
-        return jsonify({"error": str(e)}), 500
+    # Send AI's move to frontend
+    return jsonify({"ai_move": ai_move_coords, "board_state": ai_move.board}), 200
 
 if __name__ == '__main__':
     app.run(debug=True)
