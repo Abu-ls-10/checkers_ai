@@ -467,9 +467,14 @@ def read_from_file(filename):
     return board
 
 
-def get_user_moves(state: State) -> list[State]:
-    successors = generate_successors(state, 'r')
-    return successors
+def get_user_moves_dict(successors: list[State]) -> dict[tuple, list[tuple]]:
+    moves_dict = {}    
+    for new_state in successors:
+        if new_state.initial_coords in moves_dict:
+            moves_dict[new_state.initial_coords].append(new_state.new_move_coords)
+        else:
+            moves_dict[new_state.initial_coords] = [new_state.new_move_coords]
+    return moves_dict
 
 
 if __name__ == '__main__':
@@ -499,7 +504,7 @@ if __name__ == '__main__':
             print("Choose a move:")
             # state.display()
 
-            user_moves = get_user_moves(state)
+            user_moves = generate_successors(state, 'r')
             if user_moves:
                 for i in range(len(user_moves)):
                     print(f"Move {i+1}: {user_moves[i].initial_coords} to  {user_moves[i].new_move_coords}")
