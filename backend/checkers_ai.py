@@ -467,13 +467,14 @@ def read_from_file(filename):
     return board
 
 
-def get_user_moves_dict(successors: list[State]) -> dict[tuple, list[tuple]]:
+def get_user_moves_dict(successors: list[State]) -> dict[str, list[tuple]]:
     moves_dict = {}    
     for new_state in successors:
-        if new_state.initial_coords in moves_dict:
-            moves_dict[new_state.initial_coords].append(new_state.new_move_coords)
+        key = f"{new_state.initial_coords[0]},{new_state.initial_coords[0]}"
+        if key in moves_dict:
+            moves_dict[key].append(new_state.new_move_coords)
         else:
-            moves_dict[new_state.initial_coords] = [new_state.new_move_coords]
+            moves_dict[key] = [new_state.new_move_coords]
     return moves_dict
 
 

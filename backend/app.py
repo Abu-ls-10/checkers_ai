@@ -50,8 +50,12 @@ def apply_user_move():
         for new_state in moves:
             if new_state.initial_coords == old_coords and new_state.new_move_coords == new_coords:
                 curr_state = new_state
+                break
+        
+        num_red = curr_state.num_r + curr_state.num_r_kings
+        num_black = curr_state.num_b + curr_state.num_b_kings
 
-        return jsonify({"board_state": new_state.board})
+        return jsonify({"board_state": curr_state.board, "num_red": num_red, "num_black": num_black})
 
     except Exception as e:
         # Handle unexpected errors
@@ -69,14 +73,19 @@ def ai_move():
     # Compute AI's move
     ai_move = checkers_ai.limited_minimax_alphabeta(curr_state, 'b', 0, alpha, beta)[0]
 
+    if ai_move is None:
+        return jsonify({"ai_move": [], "board_state": [], "num_red": None, "num_black": None}), 200
+
     # Extract move coordinates for the AI's move
     ai_move_coords = [ai_move.initial_coords, ai_move.new_move_coords]
 
     # Update curr_state to reflect AI's move
     curr_state = ai_move
+    num_red = curr_state.num_r + curr_state.num_r_kings
+    num_black = curr_state.num_b + curr_state.num_b_kings
 
     # Send AI's move to frontend
-    return jsonify({"ai_move": ai_move_coords, "board_state": ai_move.board}), 200
+    return jsonify({"ai_move": ai_move_coords, "board_state": ai_move.board, "num_red": num_red, "num_black": num_black}), 200
 
 if __name__ == '__main__':
     app.run(debug=True)
