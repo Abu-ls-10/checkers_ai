@@ -19,11 +19,14 @@ const App = () => {
   const [board, setBoard] = useState(initialBoard);
   const [selectedPiece, setSelectedPiece] = useState(null);
   // const [selectedCell, setSelectedCell] = useState(null);
-  const [availableMoves, setAvailableMoves] = useState({"5,4": [[4, 5]]});
+  const [availableMoves, setAvailableMoves] = useState({
+    "5,0": [[4, 1]], "5,2": [[4, 1], [4, 3]], 
+    "5,4": [[4, 3], [4, 5]], "5,6": [[4, 5], [4, 7]]
+  });
   // const [aiMove, setAIMove] = useState([]);
   const [isUserTurn, setIsUserTurn] = useState(true);
-  const [numRed, setNumRed] = useState(12)
-  const [numBlack, setNumBlack] = useState(12)
+  const [numRed, setNumRed] = useState(12);
+  const [numBlack, setNumBlack] = useState(12);
 
 
 
@@ -59,16 +62,21 @@ const App = () => {
       // Format the coordinates as strings to match availableMoves keys
       const pieceKey = `${row},${col}`;
 
+      console.log(row, col);
+
       // Check if the clicked cell contains a red piece (user's turn)
       if (board[row][col] === 'r' || board[row][col] === 'R') {
         // Check if the piece at (row, col) has available moves
+        console.log("Red piece selected");
         if (availableMoves && Object.prototype.hasOwnProperty.call(availableMoves, pieceKey)) {
           setSelectedPiece([row, col]);
+          console.log("Piece can Move!");
           return false; // Piece selection only, no move completed yet
         }
       } else if (board[row][col] === '.' && selectedPiece) {
         const [selectedRow, selectedCol] = selectedPiece;
         const selectedPieceKey = `${selectedRow},${selectedCol}`;
+        console.log("Selected a tile after selecting a piece");
 
         // Check if the selected piece has a valid move to the clicked cell
         if (
@@ -76,7 +84,9 @@ const App = () => {
             (move) => move[0] === row && move[1] === col
           )
         ) {
+          console.log("Can move to this tile!");
           await applyUserMove([selectedRow, selectedCol], [row, col]);
+
           setSelectedPiece(null); // Reset selected piece after move
           return true; // Move completed
         }
@@ -108,16 +118,16 @@ const App = () => {
       // Main game loop that runs until no available moves or game is over
       while (Object.keys(availableMoves).length !== 0 && numRed > 0 && numBlack > 0) {
         if (isUserTurn) {
-          await fetchAvailableMoves();
-          console.log("Checking pos:");
-
+          console.log
           const captureUserMove = new Promise((resolve) => {
             // Handle user's multiple clicks to select piece and move
             const handleUserClick = (e) => {
-              const pos = e.target.closest('.tile, .piece');
+              console.log("Inside handleUserClick");
+              const pos = e.target.closest('.tile, .piece.red');
               if (!pos) return; // Ignore clicks outside of tiles and pieces
 
-              console.log("Checking pos:")
+              console.log(pos.dataset.row);
+
               const row = parseInt(pos.dataset.row);
               const col = parseInt(pos.dataset.col);
 
@@ -139,6 +149,8 @@ const App = () => {
         } else {
           await fetchAIMove();
           setIsUserTurn(true); // Switch back to user turn
+          await fetchAvailableMoves();
+
         }
       }
     };
@@ -148,6 +160,7 @@ const App = () => {
 
   // Render each tile with optional highlighting
   const renderTile = (row, col) => {
+    console.log("Inside renderTile");
     const isLight = (row + col) % 2 === 0;
     const tileClass = isLight ? 'tile light' : 'tile dark';
     const piece = board[row][col];
@@ -157,11 +170,11 @@ const App = () => {
     // );
 
     return (
-      <div key={`${row}-${col}`} className={tileClass}>
-        {piece === 'b' && <div className={'piece black'}></div>}
-        {piece === 'r' && <div className={'piece red'}></div>}
-        {piece === 'B' && <div className={'piece black-king'}></div>}
-        {piece === 'R' && <div className={'piece red-king'}></div>}
+      <div key={`${row}-${col}`} className={tileClass} data-row={row} data-col={col}>
+        {piece === 'b' && <div className={'piece black'} data-row={row} data-col={col}></div>}
+        {piece === 'r' && <div className={'piece red'} data-row={row} data-col={col}></div>}
+        {piece === 'B' && <div className={'piece black-king'} data-row={row} data-col={col}></div>}
+        {piece === 'R' && <div className={'piece red-king'} data-row={row} data-col={col}></div>}
       </div>
     );
   };
