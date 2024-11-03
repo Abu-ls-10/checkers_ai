@@ -41,6 +41,8 @@ def apply_user_move():
         new_coords = data.get('new_coords')
         piece = data.get('piece')
 
+        print(old_coords, new_coords, piece)
+
         if not all([old_coords, new_coords, piece]):
             return jsonify({"error": "Missing required parameters"}), 400
 

@@ -63,6 +63,7 @@ const App = () => {
       const pieceKey = `${row},${col}`;
 
       console.log(row, col);
+      console.log(selectedPiece);
 
       // Check if the clicked cell contains a red piece (user's turn)
       if (board[row][col] === 'r' || board[row][col] === 'R') {
@@ -73,7 +74,7 @@ const App = () => {
           console.log("Piece can Move!");
           return false; // Piece selection only, no move completed yet
         }
-      } else if (board[row][col] === '.' && selectedPiece) {
+      } else if (board[row][col] === '.' && selectedPiece !== null) {
         const [selectedRow, selectedCol] = selectedPiece;
         const selectedPieceKey = `${selectedRow},${selectedCol}`;
         console.log("Selected a tile after selecting a piece");
@@ -86,6 +87,7 @@ const App = () => {
         ) {
           console.log("Can move to this tile!");
           await applyUserMove([selectedRow, selectedCol], [row, col]);
+          console.log("board:", board);
 
           setSelectedPiece(null); // Reset selected piece after move
           return true; // Move completed
@@ -156,7 +158,7 @@ const App = () => {
     };
 
     playGame();
-  }, []);
+  }, [availableMoves, board, isUserTurn, numBlack, numRed, selectedPiece]);
 
   // Render each tile with optional highlighting
   const renderTile = (row, col) => {
