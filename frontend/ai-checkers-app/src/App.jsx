@@ -35,6 +35,7 @@ const App = () => {
     try {
       const response = await axios.post('http://localhost:5000/user_move');
       setAvailableMoves(response.data.user_moves);
+      console.log(availableMoves);
     } catch (error) {
       console.error("Error fetching available moves:", error);
     }
@@ -54,111 +55,108 @@ const App = () => {
     }
   };
 
-  // Game loop execution
-  useEffect(() => {
+  // Apply user's move via Flask
+  const applyUserMove = async (oldCoords, newCoords) => {
+    try {
+      const response = await axios.post('http://localhost:5000/apply_user_move', {
+        old_coords: oldCoords,
+        new_coords: newCoords,
+        piece: board[oldCoords[0]][oldCoords[1]],
+      });
+      setBoard(response.data.board_state);
+      setNumRed(response.data.num_red);
+      setNumBlack(response.data.num_black);
+      // setIsUserTurn(false)
+    } catch (error) {
+      console.error("Error applying user move:", error);
+    }
+  };
 
-    // Handle cell click to select/move pieces, returns true if move is completed
-    const handleCellClick = async (row, col) => {
-      // Format the coordinates as strings to match availableMoves keys
-      const pieceKey = `${row},${col}`;
+  // Handle cell click to select/move pieces, returns true if move is completed
+  const handleCellClick = async (row, col) => {
+    // Format the coordinates as strings to match availableMoves keys
+    const pieceKey = `${row},${col}`;
 
-      console.log(row, col);
-      console.log(selectedPiece);
+    console.log(row, col);
+    console.log(selectedPiece);
 
-      // Check if the clicked cell contains a red piece (user's turn)
-      if (board[row][col] === 'r' || board[row][col] === 'R') {
-        // Check if the piece at (row, col) has available moves
-        console.log("Red piece selected");
-        if (availableMoves && Object.prototype.hasOwnProperty.call(availableMoves, pieceKey)) {
-          setSelectedPiece([row, col]);
-          console.log("Piece can Move!");
-          return false; // Piece selection only, no move completed yet
-        }
-      } else if (board[row][col] === '.' && selectedPiece !== null) {
-        const [selectedRow, selectedCol] = selectedPiece;
-        const selectedPieceKey = `${selectedRow},${selectedCol}`;
-        console.log("Selected a tile after selecting a piece");
-
-        // Check if the selected piece has a valid move to the clicked cell
-        if (
-          availableMoves[selectedPieceKey]?.some(
-            (move) => move[0] === row && move[1] === col
-          )
-        ) {
-          console.log("Can move to this tile!");
-          await applyUserMove([selectedRow, selectedCol], [row, col]);
-          console.log("board:", board);
-
-          setSelectedPiece(null); // Reset selected piece after move
-          return true; // Move completed
-        }
+    // Check if the clicked cell contains a red piece (user's turn)
+    if (board[row][col] === 'r' || board[row][col] === 'R') {
+      // Check if the piece at (row, col) has available moves
+      console.log("Red piece selected");
+      if (availableMoves && Object.prototype.hasOwnProperty.call(availableMoves, pieceKey)) {
+        setSelectedPiece([row, col]);
+        console.log("Piece can Move!");
+        return false; // Piece selection only, no move completed yet
       }
+    } else if (board[row][col] === '.' && selectedPiece !== null) {
+      const [selectedRow, selectedCol] = selectedPiece;
+      const selectedPieceKey = `${selectedRow},${selectedCol}`;
+      console.log("Selected a tile after selecting a piece");
 
-      return false; // No move completed
-    };
+      // Check if the selected piece has a valid move to the clicked cell
+      if (
+        availableMoves[selectedPieceKey]?.some(
+          (move) => move[0] === row && move[1] === col
+        )
+      ) {
+        console.log("Can move to this tile!");
+        await applyUserMove([selectedRow, selectedCol], [row, col]);
+        console.log("board:", board);
 
+        setSelectedPiece(null); // Reset selected piece after move
+        return true; // Move completed
+      }
+    }
 
-    // Apply user's move via Flask
-    const applyUserMove = async (oldCoords, newCoords) => {
-      try {
-        const response = await axios.post('http://localhost:5000/apply_user_move', {
-          old_coords: oldCoords,
-          new_coords: newCoords,
-          piece: board[oldCoords[0]][oldCoords[1]],
+    return false; // No move completed
+  };
+
+  // Separate function to handle the user's turn
+  const handleUserTurn = async () => {
+    const captureUserMove = new Promise((resolve) => {
+      const handleUserClick = (e) => {
+        const pos = e.target.closest('.tile, .piece.red, .piece.red-king');
+        if (!pos) return;
+
+        const row = parseInt(pos.dataset.row);
+        const col = parseInt(pos.dataset.col);
+
+        handleCellClick(row, col).then((moveCompleted) => {
+          if (moveCompleted) {
+            document.removeEventListener('click', handleUserClick);
+            resolve();  // Resolve once the move is made
+          }
         });
-        setBoard(response.data.board_state);
-        setNumRed(response.data.num_red);
-        setNumBlack(response.data.num_black);
-        // setIsUserTurn(false)
-      } catch (error) {
-        console.error("Error applying user move:", error);
-      }
-    };
+      };
 
+      document.addEventListener('click', handleUserClick);
+    });
+
+    await captureUserMove;  // Wait for a valid move
+  };
+
+  // Separate useEffect to initiate the game loop only once
+  useEffect(() => {
     const playGame = async () => {
-
-      // Main game loop that runs until no available moves or game is over
-      while (Object.keys(availableMoves).length !== 0 && numRed > 0 && numBlack > 0) {
+      // Main game loop
+      if (availableMoves.length !== 0 && numRed > 0 && numBlack > 0) {
         if (isUserTurn) {
-          console.log
-          const captureUserMove = new Promise((resolve) => {
-            // Handle user's multiple clicks to select piece and move
-            const handleUserClick = (e) => {
-              console.log("Inside handleUserClick");
-              const pos = e.target.closest('.tile, .piece.red');
-              if (!pos) return; // Ignore clicks outside of tiles and pieces
-
-              console.log(pos.dataset.row);
-
-              const row = parseInt(pos.dataset.row);
-              const col = parseInt(pos.dataset.col);
-
-              handleCellClick(row, col).then((moveCompleted) => {
-                if (moveCompleted) {
-                  // Stop listening for clicks once a valid move is made
-                  document.removeEventListener('click', handleUserClick);
-                  resolve(); // Resolve to continue game loop
-                }
-              });
-            };
-
-            // Add event listener for clicks on board
-            document.addEventListener('click', handleUserClick);
-          });
-
-          await captureUserMove;  // Wait for user to complete a valid move
-          setIsUserTurn(false);   // Switch turn to AI
+          await handleUserTurn();
+          setIsUserTurn(false);
         } else {
           await fetchAIMove();
-          setIsUserTurn(true); // Switch back to user turn
+          setIsUserTurn(true);  // Switch back to user turn after AI move
+          console.log("CALLED FETCH_AVAILABLE_MOVES()");
           await fetchAvailableMoves();
-
         }
       }
     };
 
     playGame();
-  }, [availableMoves, board, isUserTurn, numBlack, numRed, selectedPiece]);
+    console.log("USE_EFFECT triggered. Current board:", board, "Available moves:", availableMoves);
+  }, [board, isUserTurn, selectedPiece, availableMoves, numBlack, numRed]);
+
 
   // Render each tile with optional highlighting
   const renderTile = (row, col) => {
@@ -187,7 +185,7 @@ const App = () => {
 
       {/* Game Info */}
       <div className="game-info">
-        <h1 style={{ fontSize: '2.5rem', marginBottom: '10px' }}>Welcome to Checkers AI!</h1>
+        <h1 style={{ fontSize: '2.5rem', marginBottom: '10px' }}>Welcome to Checkers&nbsp;AI!</h1>
         
         <p style={{ fontSize: '1.2rem', color: '#b3b3b3' }}>
           Challenge the AI in a strategic game of checkers. Outsmart the computer, or hone your skills
@@ -195,7 +193,7 @@ const App = () => {
         </p>
 
         {/* Instructions */}
-        <h3>How to Play</h3>
+        <h3>How&nbsp;to&nbsp;Play</h3>
         <ol style={{padding: '0px 0px 0px 30px' }}>
           <li>Click on a piece to select it.</li>
           <li>Available moves will be highlighted.</li>
@@ -203,12 +201,12 @@ const App = () => {
         </ol>
 
         {/* Rules */}
-        <h3>Checkers Rules</h3>
+        <h3>Checkers&nbsp;Rules</h3>
         <ul style={{padding: '0px 0px 0px 30px' }}>
           <li><strong>Starting Position:</strong> Each player begins with 12 pieces on dark squares closest to their side.</li>
           <li><strong>Moves:</strong>
             <ul>
-              <li><strong>Simple Move:</strong> Move one square diagonally forward to an empty dark square (kings can move in any diagonal direction).</li>
+              <li><strong>Simple&nbsp;Move:</strong> Move one square diagonally forward to an empty dark square (kings can move in any diagonal direction).</li>
               <li><strong>Jump:</strong> Capture an opponent&apos;s piece by jumping over it to an empty square. Multiple jumps are required if available. Jumping is mandatory if possible.</li>
             </ul>
           </li>

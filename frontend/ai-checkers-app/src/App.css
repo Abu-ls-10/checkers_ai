@@ -129,15 +129,28 @@ h1 {
 }
 
 .black-king {
-  background-color: #000000;
-  border-radius: 3px;
-  border: yellow;
+  background: radial-gradient(circle at 30% 30%, #333333, #000000 80%);
+  position: relative;
+  border: 3px solid gold; /* Golden border to highlight king status */
 }
 
 .red-king {
-  background-color: #ff4d4d;
-  border-radius: 3px;
-  border: yellow;
+  background: radial-gradient(circle at 30% 30%, #ff4d4d, #990000 80%);
+  position: relative;
+  border: 3px solid gold; /* Golden border to highlight king status */
+}
+
+/* Crown icon styling for kings */
+.black-king::after,
+.red-king::after {
+  content: "♔"; /* Unicode symbol for a crown */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.5rem;
+  color: gold;
+  font-weight: bold;
 }
 
 @media (max-width: 1200px) {

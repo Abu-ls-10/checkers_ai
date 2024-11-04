@@ -21,6 +21,7 @@ class State:
         self.num_b_kings = black_kings
         self.initial_coords = (None, None)
         self.new_move_coords = (None, None)
+        self.move_num = 0
 
     def display(self):
         for i in self.board:
@@ -179,6 +180,7 @@ def get_possible_moves(state: State, row: int, col: int, player: str, opponent: 
             new_state.board[new_row + direction[0]][new_col + direction[1]] = player
             update_counts(new_state, state.board[new_row][new_col], "jump")
             new_state.update_coords((row, col), (new_row + direction[0], new_col + direction[1]))
+            new_state.move_num = state.move_num + 1
 
             if can_become_king(player, new_row + direction[0]):
                 new_state.board[new_row + direction[0]][new_col + direction[1]] = player.upper()
@@ -200,6 +202,7 @@ def get_possible_moves(state: State, row: int, col: int, player: str, opponent: 
             new_state.board[row][col] = '.'
             new_state.board[new_row][new_col] = player
             new_state.update_coords((row, col), (new_row, new_col))
+            new_state.move_num = state.move_num + 1
 
             if can_become_king(player, new_row):
                 new_state.board[new_row][new_col] = player.upper()
@@ -250,6 +253,7 @@ def get_chain_jumps(state: State, row: int, col: int, player: str, opponent: str
                 new_state.board[new_row + direction[0]][new_col + direction[1]] = player
                 update_counts(new_state, state.board[new_row][new_col], "jump")
                 new_state.update_coords((row, col), (new_row + direction[0], new_col + direction[1]))
+                new_state.move_num = state.move_num + 1
 
                 if can_become_king(player, new_row + direction[0]):
                     new_state.board[new_row + direction[0]][new_col + direction[1]] = player.upper()
@@ -470,11 +474,11 @@ def read_from_file(filename):
 def get_user_moves_dict(successors: list[State]) -> dict[str, list[tuple]]:
     moves_dict = {}    
     for new_state in successors:
-        key = f"{new_state.initial_coords[0]},{new_state.initial_coords[0]}"
+        key = f"{new_state.initial_coords[0]},{new_state.initial_coords[1]}"
         if key in moves_dict:
-            moves_dict[key].append(new_state.new_move_coords)
+            moves_dict[key].append(list(new_state.new_move_coords))
         else:
-            moves_dict[key] = [new_state.new_move_coords]
+            moves_dict[key] = [list(new_state.new_move_coords)]
     return moves_dict
 
 
@@ -513,7 +517,7 @@ if __name__ == '__main__':
                 move = int(input("\nEnter your move number: "))
                 state = user_moves[move-1]
 
-            print("\nYour move:")
+            print("\nYour move:", state.move_num)
             state.display_with_coords()
 
             # Check for game over after user's move
