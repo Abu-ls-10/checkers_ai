@@ -12,8 +12,6 @@ An interactive Checkers game powered by an AI opponent. This project features a 
 - [Game Rules](#game-rules)
 - [API Endpoints](#api-endpoints)
 - [Future Improvements](#future-improvements)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Overview
 
