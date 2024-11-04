@@ -25,6 +25,7 @@ const App = () => {
   });
   // const [aiMove, setAIMove] = useState([]);
   const [isUserTurn, setIsUserTurn] = useState(true);
+  // const [moveApplied, setMoveApplied] = useState(false);
   const [numRed, setNumRed] = useState(12);
   const [numBlack, setNumBlack] = useState(12);
 
@@ -57,6 +58,7 @@ const App = () => {
 
   // Apply user's move via Flask
   const applyUserMove = async (oldCoords, newCoords) => {
+    if (!isUserTurn) return;
     try {
       const response = await axios.post('http://localhost:5000/apply_user_move', {
         old_coords: oldCoords,
@@ -66,7 +68,7 @@ const App = () => {
       setBoard(response.data.board_state);
       setNumRed(response.data.num_red);
       setNumBlack(response.data.num_black);
-      // setIsUserTurn(false)
+      setIsUserTurn(false)
     } catch (error) {
       console.error("Error applying user move:", error);
     }
@@ -112,8 +114,11 @@ const App = () => {
     return false; // No move completed
   };
 
-  // Separate function to handle the user's turn
+  let listenerCount = 0; // Initialize a counter for event listeners
+
+  // Function to handle the user's turn
   const handleUserTurn = async () => {
+    if (listenerCount > 0) return;
     const captureUserMove = new Promise((resolve) => {
       const handleUserClick = (e) => {
         const pos = e.target.closest('.tile, .piece.red, .piece.red-king');
@@ -123,20 +128,24 @@ const App = () => {
         const col = parseInt(pos.dataset.col);
 
         handleCellClick(row, col).then((moveCompleted) => {
+          console.log("MOVE STATUS:", moveCompleted);
           if (moveCompleted) {
-            document.removeEventListener('click', handleUserClick);
-            resolve();  // Resolve once the move is made
+            document.removeEventListener('click', handleUserClick); // Remove listener after move
+            listenerCount--; // Decrement the listener count
+            resolve(); // Resolve the promise once the move is made
           }
         });
       };
 
-      document.addEventListener('click', handleUserClick);
+      document.addEventListener('click', handleUserClick); // Add new listener
+      listenerCount++; // Increment the listener count
+      console.log(`Listeners added: ${listenerCount}`);
     });
 
-    await captureUserMove;  // Wait for a valid move
+    await captureUserMove; // Wait for a valid move
   };
 
-  // Separate useEffect to initiate the game loop only once
+  // useEffect to initiate the game loop
   useEffect(() => {
     const playGame = async () => {
       // Main game loop
@@ -155,6 +164,7 @@ const App = () => {
 
     playGame();
     console.log("USE_EFFECT triggered. Current board:", board, "Available moves:", availableMoves);
+    console.log(`Current listener count: ${listenerCount}`);
   }, [board, isUserTurn, selectedPiece, availableMoves, numBlack, numRed]);
 
 

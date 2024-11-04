@@ -253,7 +253,7 @@ def get_chain_jumps(state: State, row: int, col: int, player: str, opponent: str
                 new_state.board[new_row + direction[0]][new_col + direction[1]] = player
                 update_counts(new_state, state.board[new_row][new_col], "jump")
                 new_state.update_coords((row, col), (new_row + direction[0], new_col + direction[1]))
-                new_state.move_num = state.move_num + 1
+                new_state.move_num = state.move_num
 
                 if can_become_king(player, new_row + direction[0]):
                     new_state.board[new_row + direction[0]][new_col + direction[1]] = player.upper()

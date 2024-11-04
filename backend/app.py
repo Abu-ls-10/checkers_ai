@@ -44,7 +44,7 @@ def apply_user_move():
     curr_state = app.config['curr_state']
 
     if curr_state.move_num % 2 != 0:  # Request made when not user's turn
-        return jsonify({"error": "Request made when not user's turn"}), 500
+        return jsonify({"error": "Request made when not user's turn"}), 700
 
     try:
         # Get user-move info from frontend
@@ -57,7 +57,7 @@ def apply_user_move():
         print(old_coords, new_coords, piece)
 
         if not all([old_coords, new_coords, piece]):
-            return jsonify({"error": "Missing required parameters"}), 700
+            return jsonify({"error": "Missing required parameters"}), 800
 
         directions = [(-1, -1), (-1, 1)] if piece == 'r' else [(-1, -1), (-1, 1), (1, -1), (1, 1)]
         
@@ -92,6 +92,9 @@ def ai_move():
 
     # Get current game-state from app configuration
     curr_state = app.config['curr_state']
+
+    if curr_state.move_num % 2 == 0:  # Request made when not user's turn
+        return jsonify({"error": "Request made when not user's turn"}), 700
 
     # Set up parameters for alpha-beta pruning
     alpha = -1000000  # -float('inf')
