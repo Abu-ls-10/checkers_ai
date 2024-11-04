@@ -1,4 +1,4 @@
-# CheckersAI Project
+# CheckersAI
 
 An interactive Checkers game powered by an AI opponent. This project features a sleek user interface with turn-based gameplay, where users can challenge an AI opponent that makes optimal moves based on implemented strategies. The project is developed using a React frontend and Flask backend, making use of AI algorithms to simulate intelligent gameplay.
 
