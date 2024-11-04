@@ -57,7 +57,7 @@ def apply_user_move():
         print(old_coords, new_coords, piece)
 
         if not all([old_coords, new_coords, piece]):
-            return jsonify({"error": "Missing required parameters"}), 400
+            return jsonify({"error": "Missing required parameters"}), 700
 
         directions = [(-1, -1), (-1, 1)] if piece == 'r' else [(-1, -1), (-1, 1), (1, -1), (1, 1)]
         
