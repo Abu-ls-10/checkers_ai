@@ -30,7 +30,7 @@ CheckersAI is designed to be an engaging and challenging experience for users wh
 - **Frontend**: React, CSS
 - **Backend**: Flask, Python
 - **API Requests**: Axios
-- **AI Algorithms**: Alpha-Beta Pruning (+ Node Reordering, Caching, and Evaluation Function), Minimax
+- **AI Algorithms**: Minimax Search, Alpha-Beta Pruning, Node Reordering, Caching, and Evaluation Functions
 
 ## Installation
 
