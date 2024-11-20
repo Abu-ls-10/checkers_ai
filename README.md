@@ -27,7 +27,7 @@ CheckersAI is designed to be an engaging and challenging experience for users wh
 
 ## Tech Stack
 
-- **Frontend**: React, CSS
+- **Frontend**: JavaScript, React, CSS
 - **Backend**: Flask, Python
 - **API Requests**: Axios
 - **AI Algorithms**: Minimax Search, Alpha-Beta Pruning, Node Reordering, Caching, and Evaluation Functions
