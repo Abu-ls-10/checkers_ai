@@ -435,6 +435,10 @@ def limited_minimax_alphabeta(state: State, player: str, depth: int, alpha: floa
             if alpha >= beta:
                 break  # Prune!
 
+    # Handle edge case of only one possible move
+    if successors and not best_move:
+        best_move = successors.pop()
+
     # Cache the evaluated state and its utility value
     if depth > 0:
         cache[state_key] = (best_move, value)
